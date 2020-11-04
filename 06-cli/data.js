@@ -1,6 +1,6 @@
 const { 
   readFileSync,
-  writeFile
+  writeFileSync
 } = require('fs');
 
 // const dadosJson = require('./herois.json');
@@ -12,16 +12,34 @@ class Data {
 
   obterDados() {
     const arquivo = readFileSync(this.nomeArq, 'utf-8');
-    return JSON.parse(arquivo.toString());
+    if(arquivo)
+      return JSON.parse(arquivo.toString());
+    return [];
   }
 
   escreverDados(heroi) {
-    if(heroi) {
-      const arquivo = this.obterDados();      
+    try {
+      writeFileSync(this.nomeArq, JSON.stringify(heroi));
       return true;
+    } catch(error) {
+      return false;
     }
+  }
 
-    return null;
+  cadastrar(heroi) {
+    const dados = this.obterDados();
+    const id = heroi.id <= 2 ? heroi.id : Date.now();
+    const heroiComId = {
+      id,
+      ...heroi
+    };
+    const dadosFinal = [
+      ...dados,
+      heroiComId
+    ];
+
+    const resultado = this.escreverDados(dadosFinal);
+    return resultado;
   }
 
   listar(id) {
