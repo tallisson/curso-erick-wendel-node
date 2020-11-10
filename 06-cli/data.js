@@ -19,8 +19,14 @@ class Data {
 
   escreverDados(heroi) {
     try {
-      writeFileSync(this.nomeArq, JSON.stringify(heroi));
-      return true;
+      const dados = this.obterDados();
+      const index = dados.findIndex(item => item.id === parseInt(heroi.id));
+      if(index === -1) {
+        writeFileSync(this.nomeArq, JSON.stringify(heroi));
+        return true;
+      } else {
+        this.atualizar(heroi);
+      }
     } catch(error) {
       return false;
     }
@@ -45,6 +51,34 @@ class Data {
   listar(id) {
     const dados = this.obterDados();
     return (id ? dados.filter(item => item.id === id) : dados);
+  }
+
+  remover(id) {
+    if(!id) {
+      return Error('Id não informado');
+    }
+    const dados = this.obterDados();
+    const index = dados.findIndex(item => item.id === parseInt(id));
+    if(index === -1) {
+      throw new Error('O heroi informado não existe');
+    }
+    dados.splice(index, 1);
+    this.escreverDados(dados);
+    return true;
+  }
+
+  atualizar(heroi) {    
+    if(!heroi.id) {
+      return Error('Id não informado');
+    }    
+    const dados = this.obterDados();    
+    const index = dados.findIndex(item => item.id === parseInt(heroi.id));
+    if(index === -1) {
+      throw new Error('O heroi informado não existe');
+    }
+    dados[index] = heroi;
+    this.escreverDados(dados);
+    return this.obterDados()[index];
   }
 }
 
