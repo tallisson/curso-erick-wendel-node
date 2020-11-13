@@ -12,8 +12,9 @@ class Data {
 
   obterDados() {
     const arquivo = readFileSync(this.nomeArq, 'utf-8');
-    if(arquivo)
+    if(arquivo) {
       return JSON.parse(arquivo.toString());
+    }
     return [];
   }
 
@@ -50,7 +51,7 @@ class Data {
 
   listar(id) {
     const dados = this.obterDados();
-    return (id ? dados.filter(item => item.id === id) : dados);
+    return (id ? dados.filter(item => item.id === parseInt(id)) : dados);
   }
 
   remover(id) {
@@ -59,6 +60,7 @@ class Data {
     }
     const dados = this.obterDados();
     const index = dados.findIndex(item => item.id === parseInt(id));
+    
     if(index === -1) {
       throw new Error('O heroi informado não existe');
     }
@@ -76,6 +78,7 @@ class Data {
     if(index === -1) {
       throw new Error('O heroi informado não existe');
     }
+    heroi.id = parseInt(heroi.id);
     dados[index] = heroi;
     this.escreverDados(dados);
     return this.obterDados()[index];
